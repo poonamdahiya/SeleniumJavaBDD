@@ -11,13 +11,11 @@ public abstract class BaseClass {
     private static WebDriverWait wait;
 
     public BaseClass(WebDriver driver, WebDriverWait wait) {
-
         BaseClass.driver = driver;
         BaseClass.wait = wait;
     }
 
     protected void WaitUntilElementVisible(WebElement element) {
-
         wait.until(ExpectedConditions.visibilityOf(element));
     }
 }

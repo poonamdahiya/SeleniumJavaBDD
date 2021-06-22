@@ -22,7 +22,7 @@ public class ApplitoolsHelper {
 	PropertiesReader propertiesReader = new PropertiesReader();
 	
 	public static Boolean IsVisualGrid () throws Exception {
-		if (PropertiesReader.getValue("IsVisualGrid") == "true")
+		if (PropertiesReader.getValue("IsVisualGrid").equals("true"))
 		{return true;}
 		else
 		{return false;}
@@ -30,39 +30,37 @@ public class ApplitoolsHelper {
 	
 	
 	public void eyesInitialization(WebDriver driver, Scenario scenario) throws Exception {
-		if (PropertiesReader.getValue("IsVisualGrid")=="true") {
+		if (PropertiesReader.getValue("IsVisualGrid").equals("true")) {
 			runner = new VisualGridRunner(10);
 		
 		}else {
 			runner = new ClassicRunner();
 		}
 		eyes = new Eyes(runner);
+//		eyes.setApiKey("");
+//		eyes.setServerUrl("");
+		eyes.setBatch(new BatchInfo("My Test Batch"));
 		eyesConfig(eyes);
-		eyes.open(driver, PropertiesReader.getValue("appName"), scenario.getName(), new RectangleSize(800, 600));
+		eyes.open(driver, PropertiesReader.getValue("appName"), scenario.getName(), new RectangleSize(1024, 768));
 	}
 	public void eyesClose() throws Exception {
-		try{
-			eyes.closeAsync();
-			TestResultsSummary allTestResults = runner.getAllTestResults(false);
-			System.out.println(allTestResults);
+		if (PropertiesReader.getValue("isVisual").equals("true")) {
+			try {
+				eyes.closeAsync();
+				TestResultsSummary allTestResults = runner.getAllTestResults(false);
+				System.out.println(allTestResults);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				eyes.abortAsync();
+			}
 			
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		finally
-		{
-			eyes.abortAsync();
-		}
-		
 	}
+	
 	public static void eyesConfig(Eyes eyes) throws Exception {
 		if (IsVisualGrid()) {
-			// You can get your api key from the Applitools dashboard
-			config.setApiKey("SnesqlCsa5CqgzGnn99JOk3V105L2P109HN1bl2XcZ6yfDWs110");
-			
-			// create a new batch info instance and set it to the configuration
-			config.setBatch(new BatchInfo("Ultrafast Batch"));
-			
 			// Add browsers with different viewports
 			config.addBrowser(800, 600, BrowserType.CHROME);
 			config.addBrowser(700, 500, BrowserType.FIREFOX);
@@ -73,21 +71,13 @@ public class ApplitoolsHelper {
 			// Add mobile emulation devices in Portrait mode
 			config.addDeviceEmulation(DeviceName.iPhone_X, ScreenOrientation.PORTRAIT);
 			config.addDeviceEmulation(DeviceName.Pixel_2, ScreenOrientation.PORTRAIT);
-		} else
-			{
-				config.setApiKey("SnesqlCsa5CqgzGnn99JOk3V105L2P109HN1bl2XcZ6yfDWs110");
-				
-				// create a new batch info instance and set it to the configuration
-				config.setBatch(new BatchInfo("Ultrafast Batch"));
-			}
+		}
 		eyes.setConfiguration(config);
-		
-		
 	}
 
 	
 	public void eyesCheck(String tag) throws Exception {
-		eyes.check(Target.window().fully().withName(tag));
+		eyes.check(Target.window().fully(true).withName(tag));
 	}
 	
 	

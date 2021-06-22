@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class Hooks {
 
     public static WebDriver driver;
-    public static Eyes eyes;
-    public static EyesRunner runner;
+    public Eyes eyes;
+    public EyesRunner runner;
     public ApplitoolsHelper helper = new ApplitoolsHelper();
 
     @Before
